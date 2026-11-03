@@ -1,8 +1,9 @@
-// Vercel serverless: AI tarot interpretation via JJJ transit (EN/ZH)
+// Vercel serverless: AI interpretations via JJJ transit (EN/ZH)
+// Types: tarot, horoscope, match, dream, natal
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { type, cards, question, sign, lang } = req.body || {};
+  const { type, cards, question, sign, signA, signB, dream, birth, lang } = req.body || {};
   const zh = lang === "zh";
   const JJJ_KEY = process.env.JJJ_API_KEY;
   const JJJ_BASE = process.env.JJJ_BASE_URL || "http://43.98.190.8";
@@ -18,13 +19,26 @@ export default async function handler(req, res) {
       return `${i + 1}. [${c.position}] ${nm} (${c.reversed ? (zh ? "逆位" : "Reversed") : (zh ? "正位" : "Upright")}) — ${meaning}`;
     }).join("\n");
     prompt = zh
-      ? `你是一位经验丰富的塔罗占卜师，语气温暖神秘但不装神弄鬼。\n\n求问者的问题：${question || "（随缘一问）"}\n\n牌面：\n${cardLines}\n\n请解读：\n1. 先一句话点出核心信息\n2. 逐张牌结合位置解读，每张2-3句\n3. 综合给出整体趋势判断\n4. 最后一条具体可执行的建议\n5. 300-450字中文，不用"不是…而是…"句式，不喊口号`
-      : `You are an experienced tarot reader — warm, mystical, never cheesy.\n\nQuestion: ${question || "(open reading)"}\n\nCards:\n${cardLines}\n\nGive a reading:\n1. Open with one striking core message\n2. Interpret each card in its position, 2-3 sentences each\n3. Synthesize into an overall trend\n4. End with one concrete, actionable suggestion\n5. 300-450 words, English. No slogans, no "it's not X, it's Y" constructions.`;
+      ? `你是一位经验丰富的塔罗占卜师，语气温暖神秘但不装神弄鬼。\n\n求问者的问题：${question || "（随缘一问）"}\n\n牌面：\n${cardLines}\n\n请解读：1.先一句话点出核心信息 2.逐张牌结合位置解读，每张2-3句 3.综合给出整体趋势 4.最后一条具体可执行的建议。300-450字中文，不用"不是…而是…"句式，不喊口号。`
+      : `You are an experienced tarot reader — warm, mystical, never cheesy.\n\nQuestion: ${question || "(open reading)"}\n\nCards:\n${cardLines}\n\nGive a reading: 1. Open with one striking core message 2. Interpret each card in its position, 2-3 sentences each 3. Synthesize an overall trend 4. End with one concrete actionable suggestion. 300-450 words, English. No slogans.`;
   } else if (type === "horoscope") {
     const today = new Date().toISOString().slice(0, 10);
     prompt = zh
-      ? `你是占星师。为${sign}写今日运势（${today}）：整体运势（1-5星+一句话）、爱情、事业、财运、健康各一句话，幸运色、幸运数字，宜、忌各一条。亲切自然，200字左右中文。`
-      : `You are an astrologer. Write today's horoscope for ${sign} (${today}): overall (1-5 stars + one line), love, career, money, health (one line each), lucky color, lucky number, one do and one don't. Warm and natural, ~200 words, English.`;
+      ? `你是占星师。为${sign}写今日运势（${today}）：整体（1-5星+一句话）、爱情、事业、财运、健康各一句话，幸运色、幸运数字，宜、忌各一条。亲切自然，200字中文。`
+      : `You are an astrologer. Today's horoscope for ${sign} (${today}): overall (1-5 stars + one line), love, career, money, health (one line each), lucky color, lucky number, one do and one don't. Warm, ~200 words, English.`;
+  } else if (type === "match") {
+    prompt = zh
+      ? `你是占星合盘师。分析${signA}与${signB}的配对：契合度打分（0-100）、三个最合的维度、两个需要注意的摩擦点、一条相处建议。语气像朋友聊天，真诚不油腻，250字中文。`
+      : `You are a synastry astrologer. Analyze the match between ${signA} and ${signB}: compatibility score (0-100), three strongest dimensions, two friction points to watch, one piece of relating advice. Like a wise friend talking, 250 words, English.`;
+  } else if (type === "dream") {
+    prompt = zh
+      ? `你是解梦师。求梦者描述：${dream}\n\n请解析：1. 梦中3个关键象征及含义 2. 可能对应的现实情绪或处境 3. 一条温和的建议。像深夜电台主持人一样娓娓道来，300字中文，不说教。`
+      : `You are a dream interpreter. The dream: ${dream}\n\nInterpret: 1. Three key symbols and their meanings 2. The likely real-life emotion or situation behind it 3. One gentle suggestion. Like a late-night radio host, 300 words, English, never preachy.`;
+  } else if (type === "natal") {
+    const { date, time, place } = birth || {};
+    prompt = zh
+      ? `你是占星师。出生信息：${date} ${time || ""} ${place || ""}。请给出：太阳星座、月亮星座、上升星座的推断（注明为近似），每个配2-3句性格解读，再加一段整体命盘气质总结。400字中文，温暖真诚。`
+      : `You are an astrologer. Birth info: ${date} ${time || ""} ${place || ""}. Give: likely Sun, Moon and Rising signs (note as approximate), 2-3 sentences each on personality, plus an overall chart temperament summary. 400 words, English, warm and sincere.`;
   } else {
     return res.status(400).json({ error: "unknown type" });
   }

@@ -95,6 +95,11 @@ section { display: none; } section.on { display: block; }
   background: var(--ink2); color: var(--cream); font-size: 15px; outline: none; font-family: var(--sans); transition: border-color .2s; }
 .qbox input:focus { border-color: var(--gold); }
 .qbox input::placeholder { color: var(--faint); }
+.qbox select.sel, .qbox textarea { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--ink2); color: var(--cream); font-size: 15px; outline: none; font-family: var(--sans); }
+.qbox select.sel:focus, .qbox textarea:focus { border-color: var(--gold); }
+.qbox textarea { resize: vertical; min-height: 96px; line-height: 1.6; }
+.qbox textarea::placeholder { color: var(--faint); }
 
 .btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%;
   padding: 16px; border: none; border-radius: 14px; font-size: 15.5px; font-weight: 600; letter-spacing: .5px;
@@ -197,6 +202,9 @@ footer .rule { width: 44px; height: 1px; background: var(--line); margin: 0 auto
   <div class="tabs">
     <button class="on" data-tab="tarot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg><span data-i="tabTarot">Tarot</span></button>
     <button data-tab="stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L3 9.5l6.3-.7z"/></svg><span data-i="tabStars">Horoscope</span></button>
+    <button data-tab="match"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.7-10-9.3C.4 8.6 2.3 5 5.7 5c2 0 3.4 1.1 4.3 2.4h4c.9-1.3 2.3-2.4 4.3-2.4 3.4 0 5.3 3.6 3.7 6.7C19.5 16.3 12 21 12 21z" transform="scale(.92) translate(1,1)"/></svg><span data-i="tabMatch">Match</span></button>
+    <button data-tab="dream"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span data-i="tabDream">Dreams</span></button>
+    <button data-tab="natal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg><span data-i="tabNatal">Birth Chart</span></button>
     <button data-tab="hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span data-i="tabHist">History</span></button>
   </div>
 
@@ -220,10 +228,43 @@ footer .rule { width: 44px; height: 1px; background: var(--line); margin: 0 auto
     <div id="hout"></div>
   </section>
 
+  <section id="tab-match">
+    <div class="sec-label" data-i="matchT">Compatibility check</div>
+    <div class="sec-desc" data-i="matchD">Two signs, one honest reading.</div>
+    <div class="qbox"><label data-i="youSign">Your sign</label><select id="signA" class="sel"></select></div>
+    <div class="qbox"><label data-i="theirSign">Their sign</label><select id="signB" class="sel"></select></div>
+    <button class="btn" onclick="doMatch()"><span data-i="checkMatch">Check Compatibility</span></button>
+    <div id="mout"></div>
+  </section>
+
+  <section id="tab-dream">
+    <div class="sec-label" data-i="dreamT">Dream interpretation</div>
+    <div class="sec-desc" data-i="dreamD">Tell me what you dreamed — I'll read between the lines.</div>
+    <div class="qbox"><label data-i="yourDream">Your dream</label>
+      <textarea id="dreamText" rows="4" data-i-ph="dreamPh" placeholder="e.g. I was flying over a dark ocean…"></textarea></div>
+    <button class="btn" onclick="doDream()"><span data-i="interpretDream">Interpret My Dream</span></button>
+    <div id="dout"></div>
+  </section>
+
+  <section id="tab-natal">
+    <div class="sec-label" data-i="natalT">Birth chart</div>
+    <div class="sec-desc" data-i="natalD">Your cosmic fingerprint — Sun, Moon & Rising.</div>
+    <div class="qbox"><label data-i="birthDate">Birth date</label><input type="date" id="bDate"></div>
+    <div class="qbox"><label data-i="birthTime">Birth time (optional)</label><input type="time" id="bTime"></div>
+    <div class="qbox"><label data-i="birthPlace">Birth place (optional)</label><input id="bPlace" data-i-ph="placePh" placeholder="e.g. New York"></div>
+    <button class="btn" onclick="doNatal()"><span data-i="readChart">Read My Chart</span></button>
+    <div id="nout"></div>
+  </section>
+
   <section id="tab-hist">
     <div class="sec-label" data-i="pastR">Past readings</div>
     <div class="sec-desc" data-i="pastRD">Stored only on this device.</div>
     <div id="hist"></div>
+    <div class="sec-label" style="margin-top:26px" data-i="remindT">Daily reminder</div>
+    <div class="sec-desc" data-i="remindD">Get your daily card delivered every morning.</div>
+    <div class="qbox"><input id="remindEmail" type="email" data-i-ph="emailPh" placeholder="you@example.com"></div>
+    <button class="btn ghost" onclick="subscribe()"><span data-i="subscribe">Notify Me Daily</span></button>
+    <div id="subout" style="margin-top:10px"></div>
   </section>
 
   <footer><div class="rule"></div><span data-i="foot">For reflection & entertainment · Lumina Tarot 2026</span></footer>
@@ -235,7 +276,7 @@ footer .rule { width: 44px; height: 1px; background: var(--line); margin: 0 auto
 const I = {
 en: {
   heroTitle: 'Ask the <em>stars</em>', heroSub: 'AI tarot readings & daily horoscopes — free, private, in your pocket.',
-  tabTarot: 'Tarot', tabStars: 'Horoscope', tabHist: 'History',
+  tabTarot: 'Tarot', tabStars: 'Horoscope', tabHist: 'History', tabMatch: 'Match', tabDream: 'Dreams', tabNatal: 'Birth Chart',
   chooseSpread: 'Choose your spread', chooseSpreadD: 'Each spread answers a different kind of question.',
   yourQ: 'Your question', qPh: 'e.g. Should I take the new job?',
   draw: 'Draw Cards', reveal: 'Reveal AI Interpretation', again: 'Draw Again',
@@ -247,12 +288,22 @@ en: {
   readingFor: 'Reading the stars for', pastR: 'Past readings', pastRD: 'Stored only on this device.',
   noHist: 'No readings yet.<br>Draw your first cards under the Tarot tab.', back: '← Back',
   foot: 'For reflection & entertainment · Lumina Tarot 2026',
+  remindT: 'Daily reminder', remindD: 'Get your daily card delivered every morning.',
+  emailPh: 'you@example.com', subscribe: 'Notify Me Daily', subOk: 'Subscribed! See you daily.', subErr: 'Please enter a valid email.',
+  matchT: 'Compatibility check', matchD: 'Two signs, one honest reading.',
+  youSign: 'Your sign', theirSign: 'Their sign', checkMatch: 'Check Compatibility',
+  dreamT: 'Dream interpretation', dreamD: 'Tell me what you dreamed — I\u2019ll read between the lines.',
+  yourDream: 'Your dream', dreamPh: 'e.g. I was flying over a dark ocean…', interpretDream: 'Interpret My Dream',
+  natalT: 'Birth chart', natalD: 'Your cosmic fingerprint — Sun, Moon & Rising.',
+  birthDate: 'Birth date', birthTime: 'Birth time (optional)', birthPlace: 'Birth place (optional)',
+  placePh: 'e.g. New York', readChart: 'Read My Chart',
+  share: 'Share as Image', saved: 'Image saved — share it anywhere.',
   spreadDesc: { single: 'One card — today\u2019s energy in a glance.', three: 'Past · present · future — how things unfold.', celtic: 'Ten cards, deep dive — for the big decisions.', love: 'Five cards on where your heart is heading.', career: 'Three cards on work direction.' },
   spreadName: { single: 'Daily Card', three: 'Three Cards', celtic: 'Celtic Cross', love: 'Love Spread', career: 'Career Spread' },
 },
 zh: {
   heroTitle: '向<em>星辰</em>发问', heroSub: 'AI 塔罗占卜 · 每日星座运势 — 免费、私密、随身携带。',
-  tabTarot: '塔罗', tabStars: '星座', tabHist: '历史',
+  tabTarot: '塔罗', tabStars: '星座', tabHist: '历史', tabMatch: '配对', tabDream: '解梦', tabNatal: '星盘',
   chooseSpread: '选择牌阵', chooseSpreadD: '不同的牌阵回答不同类型的问题。',
   yourQ: '你的问题', qPh: '例如：要不要接受这份新工作？',
   draw: '抽牌', reveal: '查看 AI 解读', again: '重新抽牌',
@@ -264,6 +315,16 @@ zh: {
   readingFor: '正在为你解读', pastR: '历史占卜', pastRD: '仅保存在本设备。',
   noHist: '还没有占卜记录。<br>去塔罗页抽第一组牌吧。', back: '← 返回',
   foot: '供思考与娱乐 · Lumina Tarot 2026',
+  remindT: '每日提醒', remindD: '每天早晨把你的每日一牌送达。',
+  emailPh: 'you@example.com', subscribe: '订阅每日提醒', subOk: '已订阅！每天见。', subErr: '请输入有效邮箱。',
+  matchT: '配对合盘', matchD: '两个星座，一次真诚的解读。',
+  youSign: '你的星座', theirSign: '对方星座', checkMatch: '查看配对结果',
+  dreamT: '解梦', dreamD: '告诉我你的梦 — 我来读懂言外之意。',
+  yourDream: '你的梦', dreamPh: '例如：我梦见在黑暗的海上飞……', interpretDream: '解读我的梦',
+  natalT: '出生星盘', natalD: '你的宇宙指纹 — 太阳、月亮与上升。',
+  birthDate: '出生日期', birthTime: '出生时间（选填）', birthPlace: '出生地（选填）',
+  placePh: '例如：北京', readChart: '解读我的星盘',
+  share: '生成分享图', saved: '图片已保存 — 去分享吧。',
   spreadDesc: { single: '一张牌 — 一眼看清今日能量。', three: '过去 · 现在 · 未来 — 看事情的脉络。', celtic: '十张牌深度解读 — 给重要抉择。', love: '五张牌看清感情走向。', career: '三张牌指引事业方向。' },
   spreadName: { single: '每日一牌', three: '三牌阵', celtic: '凯尔特十字', love: '爱情牌阵', career: '事业牌阵' },
 }};
@@ -282,6 +343,7 @@ function setLang(l) {
 const $ = id => document.getElementById(id);
 let curSpread = 'three', drawn = [];
 const GLYPHS = ['✦','✧','☽','☉','♆','⚶','✵','❖','◈','⟡','☿','♃','♄','♀','♂','☊','☋','✺','❂','◉','✜','✣'];
+const SUIT_GLYPH = { Wands: '♠', Cups: '♥', Swords: '♤', Pentacles: '♦' };
 
 /* ---------- tabs ---------- */
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
@@ -306,9 +368,10 @@ function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.fl
 
 function draw() {
   const s = SPREADS[curSpread];
-  const deck = shuffle([...MAJOR_ARCANA]);
+  const deck = shuffle([...FULL_DECK]);
   drawn = deck.slice(0, s.count).map((c, i) => ({
-    ...c, reversed: Math.random() < 0.35, glyph: GLYPHS[c.n % GLYPHS.length],
+    ...c, reversed: Math.random() < 0.35,
+    glyph: c.arcana === 'minor' ? (SUIT_GLYPH[c.suit] || '✦') : GLYPHS[c.n % GLYPHS.length],
     position: s.positions ? s.positions[i] : 'Card ' + (i + 1)
   }));
   $('out').innerHTML = '';
@@ -317,7 +380,7 @@ function draw() {
       <div class="tcard deal" id="tc${i}" style="animation-delay:${i * 90}ms" onclick="flip(${i})"><div class="inner">
         <div class="face back"><span class="ring"></span><span class="sigil">✦</span></div>
         <div class="face front ${c.reversed ? 'rev' : ''}">
-          <div class="num">${c.n === 0 ? '0' : c.n}</div>
+          <div class="num">${c.arcana === 'minor' ? c.suitZh : (c.n === 0 ? '0' : c.n)}</div>
           <div class="glyph">${c.glyph}</div>
           <div class="nm">${LANG === 'zh' ? c.zh : c.en}</div>
           <div class="ori">${c.reversed ? t('reversed') : t('upright')}</div>
@@ -351,8 +414,9 @@ async function interpret() {
     const d = await r.json();
     const l = $('ld'); if (l) l.remove();
     if (d.text) {
-      $('out').insertAdjacentHTML('beforeend', `<div class="result"><h3>${t('aiTitle')}</h3>${esc(d.text)}</div>`);
-      saveHist({ kind: 'tarot', title: t('spreadName')[curSpread] + (q ? ' — ' + q : ''), text: d.text, at: Date.now() });
+      const st = t('spreadName')[curSpread] + (q ? ' — ' + q : '');
+      $('out').insertAdjacentHTML('beforeend', `<div class="result"><h3>${t('aiTitle')}</h3>${esc(d.text)}</div><button class="btn ghost" onclick='shareText(${JSON.stringify(st)}, ${JSON.stringify(d.text)})'>${t('share')}</button>`);
+      saveHist({ kind: 'tarot', title: st, text: d.text, at: Date.now() });
     } else $('out').insertAdjacentHTML('beforeend', `<div class="result">${t('silent')}</div>`);
   } catch (e) { const l = $('ld'); if (l) l.remove();
     $('out').insertAdjacentHTML('beforeend', `<div class="result">${t('connErr')}</div>`); }
@@ -399,8 +463,105 @@ function viewHist(i) { const h = window._hist[i];
   <button class="btn ghost" onclick="renderHist()">${t('back')}</button>`; }
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
+/* ---------- match / dream / natal ---------- */
+function fillSigns() {
+  const opts = ZODIAC.map((z, i) => `<option value="${i}">${LANG === 'zh' ? z.zh : z.en}</option>`).join('');
+  $('signA').innerHTML = opts; $('signB').innerHTML = opts; $('signB').selectedIndex = 1;
+}
+async function doMatch() {
+  const a = ZODIAC[+$('signA').value], b = ZODIAC[+$('signB').value];
+  const na = LANG === 'zh' ? a.zh : a.en, nb = LANG === 'zh' ? b.zh : b.en;
+  $('mout').innerHTML = `<div class="loading"><div class="orbit"></div>${t('aligning')}</div>`;
+  try {
+    const r = await fetch('/api/interpret', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'match', lang: LANG, signA: a.en + ' / ' + a.zh, signB: b.en + ' / ' + b.zh }) });
+    const d = await r.json();
+    $('mout').innerHTML = d.text
+      ? `<div class="result"><h3>${a.icon} ${na} × ${b.icon} ${nb}</h3>${esc(d.text)}</div><button class="btn ghost" onclick="shareText('${esc(na)} × ${esc(nb)}', ${JSON.stringify(d.text).replace(/'/g, "\\'")})">${t('share')}</button>`
+      : `<div class="result">${t('silent')}</div>`;
+    if (d.text) saveHist({ kind: 'match', title: na + ' × ' + nb, text: d.text, at: Date.now() });
+  } catch (e) { $('mout').innerHTML = `<div class="result">${t('connErr')}</div>`; }
+}
+async function doDream() {
+  const v = $('dreamText').value.trim();
+  if (!v) return;
+  $('dout').innerHTML = `<div class="loading"><div class="orbit"></div>${t('aligning')}</div>`;
+  try {
+    const r = await fetch('/api/interpret', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'dream', lang: LANG, dream: v }) });
+    const d = await r.json();
+    $('dout').innerHTML = d.text
+      ? `<div class="result"><h3>${t('dreamT')}</h3>${esc(d.text)}</div>`
+      : `<div class="result">${t('silent')}</div>`;
+    if (d.text) saveHist({ kind: 'dream', title: v.slice(0, 24) + '…', text: d.text, at: Date.now() });
+  } catch (e) { $('dout').innerHTML = `<div class="result">${t('connErr')}</div>`; }
+}
+async function doNatal() {
+  const dt = $('bDate').value;
+  if (!dt) return;
+  $('nout').innerHTML = `<div class="loading"><div class="orbit"></div>${t('aligning')}</div>`;
+  try {
+    const r = await fetch('/api/interpret', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'natal', lang: LANG, birth: { date: dt, time: $('bTime').value, place: $('bPlace').value.trim() } }) });
+    const d = await r.json();
+    $('nout').innerHTML = d.text
+      ? `<div class="result"><h3>${t('natalT')} · ${dt}</h3>${esc(d.text)}</div>`
+      : `<div class="result">${t('silent')}</div>`;
+    if (d.text) saveHist({ kind: 'natal', title: t('natalT') + ' ' + dt, text: d.text, at: Date.now() });
+  } catch (e) { $('nout').innerHTML = `<div class="result">${t('connErr')}</div>`; }
+}
+
+/* ---------- share image ---------- */
+function shareText(title, text) {
+  const c = document.createElement('canvas'); c.width = 1080; c.height = 1350;
+  const x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 0, 1350);
+  g.addColorStop(0, '#141126'); g.addColorStop(1, '#0c0a1a');
+  x.fillStyle = g; x.fillRect(0, 0, 1080, 1350);
+  x.strokeStyle = '#c9a86a'; x.lineWidth = 3; x.strokeRect(40, 40, 1000, 1270);
+  x.fillStyle = '#c9a86a'; x.font = '600 44px Georgia, serif'; x.textAlign = 'center';
+  x.fillText('✦ LUMINA TAROT ✦', 540, 130);
+  x.fillStyle = '#f2ecdd'; x.font = '600 52px Georgia, serif';
+  const words = title.split(''); let line = '', y = 220;
+  // simple wrap
+  x.font = '500 40px Georgia, serif';
+  wrapText(x, title, 540, 220, 900, 58);
+  x.fillStyle = '#9a94b8'; x.font = '34px sans-serif';
+  const body = text.length > 420 ? text.slice(0, 420) + '…' : text;
+  wrapText(x, body, 540, 340, 900, 52);
+  x.fillStyle = '#6b6688'; x.font = '30px sans-serif';
+  x.fillText('lumina-tarot · ' + new Date().toISOString().slice(0, 10), 540, 1260);
+  const a = document.createElement('a');
+  a.download = 'lumina-tarot.png'; a.href = c.toDataURL('image/png'); a.click();
+}
+function wrapText(x, text, cx, y, maxW, lh) {
+  const chars = text.split(''); let line = '', yy = y;
+  x.textAlign = 'center';
+  for (const ch of chars) {
+    if (x.measureText(line + ch).width > maxW || ch === '\n') { x.fillText(line, cx, yy); line = ch === '\n' ? '' : ch; yy += lh; }
+    else line += ch;
+  }
+  if (line) x.fillText(line, cx, yy);
+}
+
+/* ---------- subscribe ---------- */
+async function subscribe() {
+  const em = $('remindEmail').value.trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { $('subout').innerHTML = `<div class="result">${t('subErr')}</div>`; return; }
+  try {
+    const r = await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: em, lang: LANG }) });
+    const d = await r.json();
+    $('subout').innerHTML = `<div class="result">${d.ok ? t('subOk') : t('subErr')}</div>`;
+    if (d.ok) localStorage.setItem('lumina_sub', em);
+  } catch (e) { $('subout').innerHTML = `<div class="result">${t('connErr')}</div>`; }
+}
+
 /* ---------- init ---------- */
 setLang(LANG);
+fillSigns();
+const _sl = setLang;
+setLang = function (l) { _sl(l); fillSigns(); };
 </script>
 </body>
 </html>

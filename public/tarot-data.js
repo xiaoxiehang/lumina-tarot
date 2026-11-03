@@ -46,3 +46,34 @@ const SPREADS = {
   love: { name: "爱情十字", name_en: "Love Spread", count: 5, positions: ["你", "对方", "关系现状", "阻碍", "发展"], desc: "五张牌看清感情的走向" },
   career: { name: "事业三牌", name_en: "Career Spread", count: 3, positions: ["现状", "机遇", "建议"], desc: "事业方向的三张牌指引" },
 };
+
+// 56 Minor Arcana: 4 suits x 14 ranks
+const SUITS = [
+  { en: "Wands", zh: "权杖", el: "火", theme: "行动与激情" },
+  { en: "Cups", zh: "圣杯", el: "水", theme: "情感与关系" },
+  { en: "Swords", zh: "宝剑", el: "风", theme: "思维与冲突" },
+  { en: "Pentacles", zh: "星币", el: "土", theme: "物质与事业" },
+];
+const RANKS = [
+  { en: "Ace", zh: "一", up: "新机会、突破、潜能爆发", rev: "机会错失、延迟、能量受阻" },
+  { en: "Two", zh: "二", up: "抉择、平衡、合作初期", rev: "犹豫、失衡、计划受阻" },
+  { en: "Three", zh: "三", up: "进展、协作、初步成果", rev: "分歧、进展缓慢、团队问题" },
+  { en: "Four", zh: "四", up: "稳定、休整、守成", rev: "停滞、固守、不安" },
+  { en: "Five", zh: "五", up: "冲突、失落、挑战", rev: "走出低谷、和解" },
+  { en: "Six", zh: "六", up: "顺利、慷慨、过去的好运", rev: "施舍不均、沉溺过去" },
+  { en: "Seven", zh: "七", up: "坚持、评估、战略", rev: "半途而废、压力过大" },
+  { en: "Eight", zh: "八", up: "快速进展、专注、好消息", rev: "仓促、方向混乱" },
+  { en: "Nine", zh: "九", up: "接近完成、韧性、收获前夜", rev: "疲惫、差一口气" },
+  { en: "Ten", zh: "十", up: "圆满、完成、负担到头", rev: "负担过重、难以收尾" },
+  { en: "Page", zh: "侍从", up: "好奇、学习、新消息", rev: "浮躁、坏消息、不用心" },
+  { en: "Knight", zh: "骑士", up: "行动、冲劲、推进", rev: "鲁莽、停滞、方向偏" },
+  { en: "Queen", zh: "王后", up: "成熟、包容、内在力量", rev: "情绪化、操控" },
+  { en: "King", zh: "国王", up: "权威、掌控、成就", rev: "专横、失控" },
+];
+const MINOR_ARCANA = [];
+SUITS.forEach((s, si) => RANKS.forEach((r, ri) => MINOR_ARCANA.push({
+  n: 22 + si * 14 + ri, suit: s.en, suitZh: s.zh, rank: r.en, rankZh: r.zh,
+  en: `${r.en} of ${s.en}`, zh: `${s.zh}${r.zh}`,
+  up: r.up, rev: r.rev, kw: [s.theme],
+})));
+const FULL_DECK = [...MAJOR_ARCANA.map(c => ({ ...c, arcana: "major" })), ...MINOR_ARCANA.map(c => ({ ...c, arcana: "minor" }))];
