@@ -2,233 +2,405 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Lumina Tarot — AI Tarot Reading & Daily Horoscope</title>
-<meta name="description" content="Free AI tarot readings and daily horoscopes. Draw cards, ask questions, get mystical guidance.">
+<meta name="description" content="Free AI tarot readings and daily horoscopes. Draw cards, ask questions, receive guidance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
---bg: #0d0b1e; --bg2: #16132e; --card: #1e1a3d; --gold: #d4af6a; --gold2: #f0d49a;
---ink: #ece8f5; --muted: #8f8aa8; --accent: #7b6ff0; --line: #2c2752;
+  --ink: #0c0a1a;
+  --ink2: #141126;
+  --surface: #1a1633;
+  --surface2: #221d42;
+  --gold: #c9a86a;
+  --gold-bright: #e8cf9a;
+  --cream: #f2ecdd;
+  --muted: #9a94b8;
+  --faint: #8f8aae;
+  --line: #2e2852;
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans: "Inter", -apple-system, sans-serif;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;}
-body { background: radial-gradient(1200px 800px at 50% -10%, #1c1740 0%, var(--bg) 55%) fixed, var(--bg);
-color: var(--ink); font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-min-height: 100vh;}
-.wrap { max-width: 480px; margin: 0 auto; padding: 0 20px 60px;}
-header { text-align: center; padding: 36px 0 8px;}
-header.stars { font-size: 13px; letter-spacing: 6px; color: var(--gold); opacity:.8;}
-h1 { font-size: 30px; font-weight: 700; letter-spacing: 2px; margin: 8px 0 4px;
-background: linear-gradient(120deg, var(--gold2), var(--gold)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;}
-.sub { color: var(--muted); font-size: 14px;}
-nav { display: flex; gap: 8px; margin: 22px 0;}
-nav button { flex: 1; padding: 11px 4px; border: 1px solid var(--line); background: var(--bg2); color: var(--muted);
-border-radius: 12px; font-size: 14px; cursor: pointer; transition:.2s;}
-nav button.on { background: linear-gradient(135deg, #2a2358, #1e1a3d); color: var(--gold2); border-color: var(--gold);}
-section { display: none;} section.on { display: block; animation: fade.3s;}
-@keyframes fade { from { opacity: 0; transform: translateY(8px);}}
-.spread-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 20px;}
-.spread { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 12px;
-cursor: pointer; transition:.2s; text-align: center;}
-.spread:hover { border-color: var(--gold); transform: translateY(-2px);}
-.spread.t { font-size: 15px; font-weight: 600; margin-bottom: 4px;}
-.spread.e { font-size: 11px; color: var(--muted);}
-.spread.d { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5;}
-.qbox { margin: 6px 0 16px;}
-.qbox input { width: 100%; padding: 13px 15px; border-radius: 12px; border: 1px solid var(--line);
-background: var(--bg2); color: var(--ink); font-size: 15px; outline: none;}
-.qbox input:focus { border-color: var(--gold);}
-.qbox input::placeholder { color: #5c5778;}
-.btn { display: block; width: 100%; padding: 15px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700;
-cursor: pointer; background: linear-gradient(135deg, var(--gold), #b8934e); color: #1a1408; letter-spacing: 1px;}
-.btn:disabled { opacity:.5; cursor: wait;}
-.btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--muted); margin-top: 10px; font-weight: 400;}
-.cards { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 18px 0;}
-.tcard { width: 96px; height: 150px; border-radius: 10px; perspective: 600px; cursor: pointer;}
-.tcard.inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform.6s;}
-.tcard.flip.inner { transform: rotateY(180deg);}
-.tcard.face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px;
-display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;}
-.tcard.back { background: linear-gradient(150deg, #241f4e, #141130); border: 1px solid var(--gold); font-size: 26px;}
-.tcard.front { background: linear-gradient(160deg, #f5eeda, #e8dcc0); color: #2a2118; transform: rotateY(180deg);
-border: 1px solid var(--gold);}
-.tcard.front.rev.art { transform: rotate(180deg);}
-.tcard.num { font-size: 10px; color: #8a6d3b; letter-spacing: 1px;}
-.tcard.art { font-size: 30px; margin: 6px 0;}
-.tcard.nm { font-size: 11px; font-weight: 700; line-height: 1.3;}
-.tcard.pos { font-size: 10px; color: var(--muted); margin-top: 10px;}
-.cardrow { display: flex; flex-direction: column; align-items: center;}
-.result { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-top: 16px; line-height: 1.85; font-size: 14.5px; white-space: pre-wrap;}
-.result h3 { color: var(--gold2); font-size: 15px; margin-bottom: 10px;}
-.loading { text-align: center; color: var(--muted); padding: 24px; font-size: 14px;}
-.loading.spin { font-size: 28px; display: block; margin-bottom: 10px; animation: spin 2s linear infinite;}
-@keyframes spin { to { transform: rotate(360deg);}}
-.zgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0;}
-.zcard { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 6px;
-text-align: center; cursor: pointer; transition:.2s;}
-.zcard:hover { border-color: var(--gold);}
-.zcard.ic { font-size: 26px;}.zcard.n { font-size: 13px; margin-top: 6px;}.zcard.d { font-size: 10px; color: var(--muted);}
-.hist { margin-top: 8px;}
-.hitem { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; margin-bottom: 10px; cursor: pointer;}
-.hitem.t { font-size: 14px; font-weight: 600;}.hitem.s { font-size: 12px; color: var(--muted); margin-top: 4px;}
-footer { text-align: center; color: #4a4568; font-size: 12px; margin-top: 40px; line-height: 1.8;}
-.carddetail { background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin: 8px 0; font-size: 13px; line-height: 1.7;}
-.carddetail b { color: var(--gold2);}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+::selection { background: #c9a86a; color: #0c0a1a; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+/* ambient starfield */
+.stars-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, #fff8, transparent),
+    radial-gradient(1px 1px at 68% 8%, #fff6, transparent),
+    radial-gradient(1.5px 1.5px at 84% 34%, #fff5, transparent),
+    radial-gradient(1px 1px at 32% 58%, #fff4, transparent),
+    radial-gradient(1px 1px at 52% 82%, #fff5, transparent),
+    radial-gradient(1.5px 1.5px at 8% 74%, #fff4, transparent),
+    radial-gradient(1px 1px at 92% 66%, #fff5, transparent),
+    radial-gradient(1px 1px at 44% 12%, #fff6, transparent);
+}
+.moon-glow { position: fixed; top: -180px; left: 50%; transform: translateX(-50%);
+  width: 520px; height: 520px; border-radius: 50%; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle, #3d347022 0%, transparent 65%); }
+
+.wrap { position: relative; z-index: 1; max-width: 520px; margin: 0 auto; padding: 0 22px 70px; }
+
+/* header */
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 6px; }
+.brand { font-family: var(--serif); font-size: 15px; letter-spacing: 4px; color: var(--gold); }
+.lang { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang button { background: none; border: none; color: var(--muted); font-size: 12px; font-weight: 600;
+  padding: 7px 13px; cursor: pointer; letter-spacing: 1px; }
+.lang button.on { background: var(--gold); color: #14100a; }
+.hero { text-align: center; padding: 30px 0 10px; }
+.hero h1 { font-family: var(--serif); font-size: 44px; font-weight: 600; letter-spacing: 1px; color: var(--cream); line-height: 1.15; }
+.hero h1 em { font-style: italic; color: var(--gold-bright); }
+.hero p { color: var(--muted); font-size: 14px; margin-top: 10px; line-height: 1.7; }
+
+/* tabs */
+.tabs { display: flex; gap: 6px; margin: 26px 0 20px; padding: 5px; background: var(--ink2);
+  border: 1px solid var(--line); border-radius: 16px; }
+.tabs button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px 4px; border: none; background: none; color: var(--muted); border-radius: 11px;
+  font-size: 13.5px; font-weight: 500; cursor: pointer; transition: background .25s, color .25s; font-family: var(--sans); }
+.tabs button svg { width: 16px; height: 16px; }
+.tabs button.on { background: var(--surface2); color: var(--gold-bright); }
+section { display: none; } section.on { display: block; }
+.sec-label { font-family: var(--serif); font-size: 21px; color: var(--cream); margin: 6px 0 4px; }
+.sec-desc { color: var(--muted); font-size: 13px; margin-bottom: 16px; line-height: 1.6; }
+
+/* spread picker — varied rows, not identical grid */
+.spread { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 15px 16px; margin-bottom: 10px; cursor: pointer; color: var(--cream);
+  transition: border-color .2s, background .2s; font-family: var(--sans); }
+.spread:hover { border-color: #4a4178; }
+.spread.sel { border-color: var(--gold); background: var(--surface2); }
+.spread .dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--gold); flex: none; transition: background .2s; }
+.spread.sel .dot { background: var(--gold); }
+.spread .tx { flex: 1; }
+.spread .t { font-size: 15px; font-weight: 600; }
+.spread .d { font-size: 12.5px; color: var(--muted); margin-top: 3px; line-height: 1.55; }
+.spread .n { font-family: var(--serif); font-size: 20px; color: var(--gold); flex: none; width: 34px; text-align: right; }
+
+.qbox { margin: 16px 0; }
+.qbox label { display: block; font-size: 12px; letter-spacing: 1.5px; color: var(--faint); margin-bottom: 8px; text-transform: uppercase; }
+.qbox input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--ink2); color: var(--cream); font-size: 15px; outline: none; font-family: var(--sans); transition: border-color .2s; }
+.qbox input:focus { border-color: var(--gold); }
+.qbox input::placeholder { color: var(--faint); }
+
+.btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%;
+  padding: 16px; border: none; border-radius: 14px; font-size: 15.5px; font-weight: 600; letter-spacing: .5px;
+  cursor: pointer; background: var(--gold); color: #171106; font-family: var(--sans);
+  transition: transform .15s, box-shadow .2s; box-shadow: 0 8px 22px -10px #000c; }
+.btn:hover { box-shadow: 0 10px 28px -8px #000d; }
+.btn:active { transform: scale(.985); }
+.btn:disabled { opacity: .55; cursor: wait; transform: none; }
+.btn svg { width: 17px; height: 17px; }
+.btn.ghost { background: none; border: 1px solid var(--line); color: var(--muted); box-shadow: none; margin-top: 10px; font-weight: 500; }
+
+/* cards — the focal moment */
+.stage { perspective: 1200px; }
+.cards { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 22px 0 6px; }
+.cardrow { display: flex; flex-direction: column; align-items: center; }
+.tcard { width: 100px; height: 168px; cursor: pointer; }
+.tcard .inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+  transition: transform .7s cubic-bezier(.2,.7,.25,1.1); }
+.tcard.flip .inner { transform: rotateY(180deg); }
+.tcard .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 10px 8px; text-align: center; overflow: hidden; }
+.tcard .back { background: linear-gradient(155deg, #262052 0%, #131029 70%);
+  border: 1px solid #4a4178; }
+.tcard .back .sigil { width: 44px; height: 44px; border: 1.5px solid var(--gold); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 20px; }
+.tcard .back .ring { position: absolute; inset: 7px; border: 1px solid #c9a86a33; border-radius: 8px; }
+.tcard .front { background: linear-gradient(165deg, #f7f1e2 0%, #e9dec4 100%); color: #241c10;
+  transform: rotateY(180deg); border: 1px solid var(--gold); box-shadow: 0 10px 30px -10px #000a; }
+.tcard .front .num { font-family: var(--serif); font-size: 13px; color: #8a6d3b; letter-spacing: 2px; }
+.tcard .front .glyph { font-size: 34px; margin: 8px 0 6px; line-height: 1; transition: transform .7s; }
+.tcard .front.rev .glyph { transform: rotate(180deg); }
+.tcard .front .nm { font-family: var(--serif); font-size: 13.5px; font-weight: 700; line-height: 1.25; }
+.tcard .front .ori { font-size: 9.5px; letter-spacing: 1.5px; color: #8a6d3b; margin-top: 5px; text-transform: uppercase; }
+.tcard .pos { font-size: 11px; color: var(--muted); margin-top: 9px; letter-spacing: .5px; }
+/* deal-in entrance */
+@keyframes dealIn { from { opacity: 0; transform: translateY(26px) rotateX(12deg); } }
+.tcard.deal { animation: dealIn .55s cubic-bezier(.2,.8,.3,1) backwards; }
+
+.meaning { background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px; margin-top: 18px; }
+.meaning h3 { font-family: var(--serif); font-size: 19px; color: var(--gold-bright); margin-bottom: 12px; font-weight: 600; }
+.mrow { padding: 11px 0; border-top: 1px solid var(--line); font-size: 13.5px; line-height: 1.7; }
+.mrow:first-of-type { border-top: none; padding-top: 0; }
+.mrow .p { color: var(--gold); font-size: 11.5px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+.mrow .c { font-weight: 600; color: var(--cream); }
+.mrow .m { color: var(--muted); }
+
+.result { background: var(--surface); border: 1px solid var(--gold); border-radius: 14px;
+  padding: 20px 18px; margin-top: 16px; line-height: 1.9; font-size: 14.5px; white-space: pre-wrap; }
+.result h3 { font-family: var(--serif); font-size: 20px; color: var(--gold-bright); margin-bottom: 10px; font-weight: 600; }
+
+.loading { text-align: center; padding: 30px 10px; color: var(--muted); font-size: 13.5px; }
+.orbit { width: 52px; height: 52px; margin: 0 auto 14px; position: relative; }
+.orbit::before { content: ""; position: absolute; inset: 0; border-radius: 50%;
+  border: 1.5px solid transparent; border-top-color: var(--gold); animation: orb 1.1s linear infinite; }
+.orbit::after { content: "✦"; position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; color: var(--gold); font-size: 18px; }
+@keyframes orb { to { transform: rotate(360deg); } }
+
+/* horoscope */
+.zgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 4px 0 6px; }
+.zcard { background: var(--surface); border: 1px solid var(--line); border-radius: 13px; padding: 16px 6px 13px;
+  text-align: center; cursor: pointer; transition: border-color .2s, background .2s; color: var(--cream); font-family: var(--sans); }
+.zcard:hover { border-color: #4a4178; }
+.zcard:active { transform: scale(.97); }
+.zcard .ic { font-size: 27px; line-height: 1; color: var(--gold-bright); }
+.zcard .n { font-size: 12.5px; margin-top: 8px; font-weight: 500; }
+.zcard .d { font-size: 10.5px; color: var(--faint); margin-top: 2px; }
+
+/* history */
+.hitem { display: block; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 13px; padding: 15px 16px; margin-bottom: 10px; cursor: pointer; color: var(--cream); font-family: var(--sans); }
+.hitem:hover { border-color: #4a4178; }
+.hitem .t { font-size: 14px; font-weight: 600; }
+.hitem .s { font-size: 12px; color: var(--faint); margin-top: 5px; }
+.empty { text-align: center; color: var(--faint); font-size: 13.5px; padding: 44px 20px; line-height: 2; }
+
+footer { text-align: center; color: var(--faint); font-size: 12px; margin-top: 46px; line-height: 2; }
+footer .rule { width: 44px; height: 1px; background: var(--line); margin: 0 auto 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
 </style>
 </head>
 <body>
+<div class="stars-bg"></div><div class="moon-glow"></div>
 <div class="wrap">
-<header>
-<div class="stars">✦ ✦ ✦</div>
-<h1>LUMINA TAROT</h1>
-<div class="sub">AI-powered tarot readings & daily horoscopes</div>
-</header>
-<nav>
-<button class="on" data-tab="tarot">🔮 Tarot</button>
-<button data-tab="stars">⭐ Horoscope</button>
-<button data-tab="hist">📜 History</button>
-</nav>
+  <div class="topbar">
+    <div class="brand">LUMINA</div>
+    <div class="lang"><button id="langEn" class="on" onclick="setLang('en')">EN</button><button id="langZh" onclick="setLang('zh')">中文</button></div>
+  </div>
 
-<section id="tab-tarot" class="on">
-<div class="spread-grid" id="spreads"></div>
-<div class="qbox"><input id="question" placeholder="Ask a question (optional) — e.g. Should I take the new job?"></div>
-<button class="btn" id="drawBtn" onclick="draw()">✦ Draw Cards ✦</button>
-<div class="cards" id="cards"></div>
-<div id="out"></div>
-</section>
+  <div class="hero">
+    <h1 id="heroTitle">Ask the <em>stars</em></h1>
+    <p id="heroSub">AI tarot readings & daily horoscopes — free, private, in your pocket.</p>
+  </div>
 
-<section id="tab-stars">
-<p class="sub" style="text-align:center;margin-bottom:6px">Tap your sign for today's horoscope</p>
-<div class="zgrid" id="zgrid"></div>
-<div id="hout"></div>
-</section>
+  <div class="tabs">
+    <button class="on" data-tab="tarot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg><span data-i="tabTarot">Tarot</span></button>
+    <button data-tab="stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L3 9.5l6.3-.7z"/></svg><span data-i="tabStars">Horoscope</span></button>
+    <button data-tab="hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span data-i="tabHist">History</span></button>
+  </div>
 
-<section id="tab-hist">
-<div class="hist" id="hist"></div>
-</section>
+  <section id="tab-tarot" class="on">
+    <div class="sec-label" data-i="chooseSpread">Choose your spread</div>
+    <div class="sec-desc" data-i="chooseSpreadD">Each spread answers a different kind of question.</div>
+    <div id="spreads"></div>
+    <div class="qbox">
+      <label data-i="yourQ">Your question</label>
+      <input id="question" data-i-ph="qPh" placeholder="e.g. Should I take the new job?">
+    </div>
+    <button class="btn" id="drawBtn" onclick="draw()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg><span data-i="draw">Draw Cards</span></button>
+    <div class="stage"><div class="cards" id="cards"></div></div>
+    <div id="out"></div>
+  </section>
 
-<footer>For reflection & entertainment.<br>Lumina Tarot · 2026</footer>
+  <section id="tab-stars">
+    <div class="sec-label" data-i="dailyH">Daily horoscope</div>
+    <div class="sec-desc" data-i="dailyHD">Tap your sign — fresh every morning.</div>
+    <div class="zgrid" id="zgrid"></div>
+    <div id="hout"></div>
+  </section>
+
+  <section id="tab-hist">
+    <div class="sec-label" data-i="pastR">Past readings</div>
+    <div class="sec-desc" data-i="pastRD">Stored only on this device.</div>
+    <div id="hist"></div>
+  </section>
+
+  <footer><div class="rule"></div><span data-i="foot">For reflection & entertainment · Lumina Tarot 2026</span></footer>
 </div>
 
 <script src="tarot-data.js"></script>
 <script>
-const $ = id => document.getElementById(id);
-let curSpread = "three", drawn = [];
+/* ---------- i18n ---------- */
+const I = {
+en: {
+  heroTitle: 'Ask the <em>stars</em>', heroSub: 'AI tarot readings & daily horoscopes — free, private, in your pocket.',
+  tabTarot: 'Tarot', tabStars: 'Horoscope', tabHist: 'History',
+  chooseSpread: 'Choose your spread', chooseSpreadD: 'Each spread answers a different kind of question.',
+  yourQ: 'Your question', qPh: 'e.g. Should I take the new job?',
+  draw: 'Draw Cards', reveal: 'Reveal AI Interpretation', again: 'Draw Again',
+  yourCards: 'Your cards', upright: 'Upright', reversed: 'Reversed',
+  aiTitle: 'AI Interpretation', silent: 'The stars are silent right now. Try again in a moment.',
+  connErr: 'Connection hiccup — please try again.',
+  aligning: 'The stars are aligning…',
+  dailyH: 'Daily horoscope', dailyHD: 'Tap your sign — fresh every morning.',
+  readingFor: 'Reading the stars for', pastR: 'Past readings', pastRD: 'Stored only on this device.',
+  noHist: 'No readings yet.<br>Draw your first cards under the Tarot tab.', back: '← Back',
+  foot: 'For reflection & entertainment · Lumina Tarot 2026',
+  spreadDesc: { single: 'One card — today\u2019s energy in a glance.', three: 'Past · present · future — how things unfold.', celtic: 'Ten cards, deep dive — for the big decisions.', love: 'Five cards on where your heart is heading.', career: 'Three cards on work direction.' },
+  spreadName: { single: 'Daily Card', three: 'Three Cards', celtic: 'Celtic Cross', love: 'Love Spread', career: 'Career Spread' },
+},
+zh: {
+  heroTitle: '向<em>星辰</em>发问', heroSub: 'AI 塔罗占卜 · 每日星座运势 — 免费、私密、随身携带。',
+  tabTarot: '塔罗', tabStars: '星座', tabHist: '历史',
+  chooseSpread: '选择牌阵', chooseSpreadD: '不同的牌阵回答不同类型的问题。',
+  yourQ: '你的问题', qPh: '例如：要不要接受这份新工作？',
+  draw: '抽牌', reveal: '查看 AI 解读', again: '重新抽牌',
+  yourCards: '你的牌', upright: '正位', reversed: '逆位',
+  aiTitle: 'AI 解读', silent: '星辰此刻沉默，请稍后再试。',
+  connErr: '网络开小差了，请重试。',
+  aligning: '星辰正在排列……',
+  dailyH: '今日星座运势', dailyHD: '点你的星座 — 每天清晨更新。',
+  readingFor: '正在为你解读', pastR: '历史占卜', pastRD: '仅保存在本设备。',
+  noHist: '还没有占卜记录。<br>去塔罗页抽第一组牌吧。', back: '← 返回',
+  foot: '供思考与娱乐 · Lumina Tarot 2026',
+  spreadDesc: { single: '一张牌 — 一眼看清今日能量。', three: '过去 · 现在 · 未来 — 看事情的脉络。', celtic: '十张牌深度解读 — 给重要抉择。', love: '五张牌看清感情走向。', career: '三张牌指引事业方向。' },
+  spreadName: { single: '每日一牌', three: '三牌阵', celtic: '凯尔特十字', love: '爱情牌阵', career: '事业牌阵' },
+}};
+let LANG = localStorage.getItem('lumina_lang') || 'en';
+function t(k) { return (I[LANG] && I[LANG][k]) || I.en[k] || k; }
+function setLang(l) {
+  LANG = l; localStorage.setItem('lumina_lang', l);
+  document.documentElement.lang = l === 'zh' ? 'zh-CN' : 'en';
+  $('langEn').classList.toggle('on', l === 'en'); $('langZh').classList.toggle('on', l === 'zh');
+  document.querySelectorAll('[data-i]').forEach(el => { el.innerHTML = t(el.dataset.i); });
+  document.querySelectorAll('[data-i-ph]').forEach(el => { el.placeholder = t(el.dataset.iPh); });
+  renderSpreads();
+}
 
-// tabs
-document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
-document.querySelectorAll("nav button").forEach(x => x.classList.remove("on"));
-document.querySelectorAll("section").forEach(x => x.classList.remove("on"));
-b.classList.add("on"); $("tab-" + b.dataset.tab).classList.add("on");
-if (b.dataset.tab === "hist") renderHist();
+/* ---------- data / state ---------- */
+const $ = id => document.getElementById(id);
+let curSpread = 'three', drawn = [];
+const GLYPHS = ['✦','✧','☽','☉','♆','⚶','✵','❖','◈','⟡','☿','♃','♄','♀','♂','☊','☋','✺','❂','◉','✜','✣'];
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('section').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); $('tab-' + b.dataset.tab).classList.add('on');
+  if (b.dataset.tab === 'hist') renderHist();
 });
 
-// spreads
-$("spreads").innerHTML = Object.entries(SPREADS).map(([k, s]) =>
-`<div class="spread" data-k="${k}" onclick="pickSpread('${k}')">
-<div class="t">${s.name}</div><div class="e">${s.name_en} · ${s.count} cards</div><div class="d">${s.desc}</div>
-</div>`).join("");
-function pickSpread(k) {
-curSpread = k;
-document.querySelectorAll(".spread").forEach(x => x.style.borderColor = x.dataset.k === k? "#d4af6a": "");
-$("cards").innerHTML = ""; $("out").innerHTML = "";
+/* ---------- spreads ---------- */
+function renderSpreads() {
+  $('spreads').innerHTML = Object.entries(SPREADS).map(([k, s], i) => `
+    <button class="spread ${k === curSpread ? 'sel' : ''}" data-k="${k}" onclick="pickSpread('${k}')">
+      <span class="dot"></span>
+      <span class="tx"><span class="t">${t('spreadName')[k]}</span><span class="d" style="display:block">${t('spreadDesc')[k]}</span></span>
+      <span class="n">${s.count}</span>
+    </button>`).join('');
 }
-pickSpread("three");
+function pickSpread(k) { curSpread = k; renderSpreads(); $('cards').innerHTML = ''; $('out').innerHTML = ''; }
 
-function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]];} return a;}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
 function draw() {
-const s = SPREADS[curSpread];
-const deck = shuffle([...MAJOR_ARCANA]);
-drawn = deck.slice(0, s.count).map((c, i) => ({
-...c, reversed: Math.random() < 0.35,
-position: s.positions? s.positions[i]: `Card ${i + 1}`
-}));
-$("out").innerHTML = "";
-$("cards").innerHTML = drawn.map((c, i) => `
-<div class="cardrow">
-<div class="tcard" id="tc${i}" onclick="flip(${i})"><div class="inner">
-<div class="face back">✦</div>
-<div class="face front ${c.reversed? "rev": ""}">
-<div class="art">${c.reversed? "⟲": "✧"}</div>
-<div class="num">${c.n === 0? "0": c.n}</div>
-<div class="nm">${c.en}</div>
-</div>
-</div></div>
-<div class="pos">${c.position}</div>
-</div>`).join("");
-// auto flip staggered
-drawn.forEach((_, i) => setTimeout(() => flip(i), 350 + i * 280));
-setTimeout(showDetails, 350 + drawn.length * 280 + 400);
+  const s = SPREADS[curSpread];
+  const deck = shuffle([...MAJOR_ARCANA]);
+  drawn = deck.slice(0, s.count).map((c, i) => ({
+    ...c, reversed: Math.random() < 0.35, glyph: GLYPHS[c.n % GLYPHS.length],
+    position: s.positions ? s.positions[i] : 'Card ' + (i + 1)
+  }));
+  $('out').innerHTML = '';
+  $('cards').innerHTML = drawn.map((c, i) => `
+    <div class="cardrow">
+      <div class="tcard deal" id="tc${i}" style="animation-delay:${i * 90}ms" onclick="flip(${i})"><div class="inner">
+        <div class="face back"><span class="ring"></span><span class="sigil">✦</span></div>
+        <div class="face front ${c.reversed ? 'rev' : ''}">
+          <div class="num">${c.n === 0 ? '0' : c.n}</div>
+          <div class="glyph">${c.glyph}</div>
+          <div class="nm">${LANG === 'zh' ? c.zh : c.en}</div>
+          <div class="ori">${c.reversed ? t('reversed') : t('upright')}</div>
+        </div>
+      </div></div>
+      <div class="pos">${c.position}</div>
+    </div>`).join('');
+  drawn.forEach((_, i) => setTimeout(() => flip(i), 500 + i * 320));
+  setTimeout(showDetails, 500 + drawn.length * 320 + 500);
 }
-function flip(i) { const el = $("tc" + i); if (el &&!el.classList.contains("flip")) el.classList.add("flip");}
+function flip(i) { const el = $('tc' + i); if (el && !el.classList.contains('flip')) el.classList.add('flip'); }
 
 function showDetails() {
-const q = $("question").value.trim();
-let h = `<div class="carddetail"><b>Your cards:</b><br>` + drawn.map(c =>
-`<b>${c.en} (${c.zh})</b> ${c.reversed? "⟲ Reversed": "✧ Upright"} — ${c.reversed? c.rev: c.up}`
-).join("<br>") + `</div>
-<button class="btn" id="aiBtn" onclick="interpret()">✦ Reveal AI Interpretation ✦</button>
-<button class="btn ghost" onclick="draw()">↻ Draw Again</button>`;
-$("out").innerHTML = h;
+  const rows = drawn.map(c => `
+    <div class="mrow"><div class="p">${c.position}</div>
+    <div class="c">${LANG === 'zh' ? c.zh : c.en} · ${c.reversed ? t('reversed') : t('upright')}</div>
+    <div class="m">${c.reversed ? c.rev : c.up}</div></div>`).join('');
+  $('out').innerHTML = `
+    <div class="meaning"><h3>${t('yourCards')}</h3>${rows}</div>
+    <div style="margin-top:14px"><button class="btn" id="aiBtn" onclick="interpret()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L3 9.5l6.3-.7z"/></svg><span>${t('reveal')}</span></button>
+    <button class="btn ghost" onclick="draw()">${t('again')}</button></div>`;
 }
 
 async function interpret() {
-const btn = $("aiBtn"); btn.disabled = true;
-$("out").insertAdjacentHTML("beforeend", `<div class="loading" id="ld"><span class="spin">🔮</span>The stars are aligning…</div>`);
-const q = $("question").value.trim();
-try {
-const r = await fetch("/api/interpret", { method: "POST", headers: { "Content-Type": "application/json"},
-body: JSON.stringify({ type: "tarot", cards: drawn, question: q})});
-const d = await r.json();
-$("ld").remove();
-if (d.text) {
-$("out").insertAdjacentHTML("beforeend", `<div class="result"><h3>✦ AI Interpretation</h3>${esc(d.text)}</div>`);
-saveHist({ kind: "tarot", title: SPREADS[curSpread].name + (q? " — " + q: ""), text: d.text, at: Date.now()});
-} else $("out").insertAdjacentHTML("beforeend", `<div class="result">The stars are silent right now. Try again in a moment.</div>`);
-} catch (e) {
-const l = $("ld"); if (l) l.remove();
-$("out").insertAdjacentHTML("beforeend", `<div class="result">Connection hiccup — please try again.</div>`);
-}
-btn.disabled = false;
+  const btn = $('aiBtn'); btn.disabled = true;
+  $('out').insertAdjacentHTML('beforeend', `<div class="loading" id="ld"><div class="orbit"></div>${t('aligning')}</div>`);
+  const q = $('question').value.trim();
+  try {
+    const r = await fetch('/api/interpret', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'tarot', lang: LANG, cards: drawn.map(c => ({ position: c.position, zh: c.zh, en: c.en, reversed: c.reversed, up: c.up, rev: c.rev })), question: q }) });
+    const d = await r.json();
+    const l = $('ld'); if (l) l.remove();
+    if (d.text) {
+      $('out').insertAdjacentHTML('beforeend', `<div class="result"><h3>${t('aiTitle')}</h3>${esc(d.text)}</div>`);
+      saveHist({ kind: 'tarot', title: t('spreadName')[curSpread] + (q ? ' — ' + q : ''), text: d.text, at: Date.now() });
+    } else $('out').insertAdjacentHTML('beforeend', `<div class="result">${t('silent')}</div>`);
+  } catch (e) { const l = $('ld'); if (l) l.remove();
+    $('out').insertAdjacentHTML('beforeend', `<div class="result">${t('connErr')}</div>`); }
+  btn.disabled = false;
 }
 
-// horoscope
-$("zgrid").innerHTML = ZODIAC.map((z, i) =>
-`<div class="zcard" onclick="horo(${i})"><div class="ic">${z.icon}</div><div class="n">${z.en}</div><div class="d">${z.dates}</div></div>`).join("");
+/* ---------- horoscope ---------- */
+function renderZodiac() {
+  $('zgrid').innerHTML = ZODIAC.map((z, i) => `
+    <button class="zcard" onclick="horo(${i})"><div class="ic">${z.icon}</div>
+    <div class="n">${LANG === 'zh' ? z.zh : z.en}</div><div class="d">${z.dates}</div></button>`).join('');
+}
+const _rs = renderSpreads;
+renderSpreads = function () { _rs(); renderZodiac(); };
 
 async function horo(i) {
-const z = ZODIAC[i];
-$("hout").innerHTML = `<div class="loading"><span class="spin">⭐</span>Reading the stars for ${z.en}…</div>`;
-try {
-const r = await fetch("/api/interpret", { method: "POST", headers: { "Content-Type": "application/json"},
-body: JSON.stringify({ type: "horoscope", sign: z.en + " (" + z.zh + ")"})});
-const d = await r.json();
-if (d.text) {
-$("hout").innerHTML = `<div class="result"><h3>${z.icon} ${z.en} — Today</h3>${esc(d.text)}</div>`;
-saveHist({ kind: "horoscope", title: z.en + " daily horoscope", text: d.text, at: Date.now()});
-} else $("hout").innerHTML = `<div class="result">The stars are silent right now.</div>`;
-} catch (e) { $("hout").innerHTML = `<div class="result">Connection hiccup — please try again.</div>`;}
+  const z = ZODIAC[i];
+  const name = LANG === 'zh' ? z.zh : z.en;
+  $('hout').innerHTML = `<div class="loading"><div class="orbit"></div>${t('readingFor')} ${name}…</div>`;
+  try {
+    const r = await fetch('/api/interpret', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'horoscope', lang: LANG, sign: z.en + ' / ' + z.zh }) });
+    const d = await r.json();
+    if (d.text) {
+      $('hout').innerHTML = `<div class="result"><h3>${z.icon} ${name}</h3>${esc(d.text)}</div>`;
+      saveHist({ kind: 'horoscope', title: name, text: d.text, at: Date.now() });
+    } else $('hout').innerHTML = `<div class="result">${t('silent')}</div>`;
+  } catch (e) { $('hout').innerHTML = `<div class="result">${t('connErr')}</div>`; }
 }
 
-// history
-function saveHist(h) {
-try { const a = JSON.parse(localStorage.getItem("lumina_hist") || "[]"); a.unshift(h);
-localStorage.setItem("lumina_hist", JSON.stringify(a.slice(0, 30)));} catch (e) {}
-}
+/* ---------- history ---------- */
+function saveHist(h) { try { const a = JSON.parse(localStorage.getItem('lumina_hist') || '[]'); a.unshift(h);
+  localStorage.setItem('lumina_hist', JSON.stringify(a.slice(0, 30))); } catch (e) {} }
 function renderHist() {
-let a = []; try { a = JSON.parse(localStorage.getItem("lumina_hist") || "[]");} catch (e) {}
-$("hist").innerHTML = a.length? a.map((h, i) => `
-<div class="hitem" onclick="viewHist(${i})"><div class="t">${esc(h.title)}</div>
-<div class="s">${new Date(h.at).toLocaleString()} · ${h.kind}</div></div>`).join("")
-: `<p class="sub" style="text-align:center;padding:30px">No readings yet.<br>Draw your first cards under the Tarot tab.</p>`;
-window._hist = a;
+  let a = []; try { a = JSON.parse(localStorage.getItem('lumina_hist') || '[]'); } catch (e) {}
+  $('hist').innerHTML = a.length ? a.map((h, i) => `
+    <button class="hitem" onclick="viewHist(${i})"><div class="t">${esc(h.title)}</div>
+    <div class="s">${new Date(h.at).toLocaleString(LANG === 'zh' ? 'zh-CN' : 'en-US')} · ${h.kind}</div></button>`).join('')
+    : `<div class="empty">${t('noHist')}</div>`;
+  window._hist = a;
 }
-function viewHist(i) {
-const h = window._hist[i];
-$("hist").innerHTML = `<div class="result"><h3>${esc(h.title)}</h3>${esc(h.text)}</div>
-<button class="btn ghost" onclick="renderHist()">← Back</button>`;
-}
-function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");}
+function viewHist(i) { const h = window._hist[i];
+  $('hist').innerHTML = `<div class="result"><h3>${esc(h.title)}</h3>${esc(h.text)}</div>
+  <button class="btn ghost" onclick="renderHist()">${t('back')}</button>`; }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+/* ---------- init ---------- */
+setLang(LANG);
 </script>
 </body>
 </html>
