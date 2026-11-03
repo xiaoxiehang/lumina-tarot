@@ -39,6 +39,12 @@ export default async function handler(req, res) {
     prompt = zh
       ? `你是占星师。出生信息：${date} ${time || ""} ${place || ""}。请给出：太阳星座、月亮星座、上升星座的推断（注明为近似），每个配2-3句性格解读，再加一段整体命盘气质总结。400字中文，温暖真诚。`
       : `You are an astrologer. Birth info: ${date} ${time || ""} ${place || ""}. Give: likely Sun, Moon and Rising signs (note as approximate), 2-3 sentences each on personality, plus an overall chart temperament summary. 400 words, English, warm and sincere.`;
+  } else if (type === "oracle") {
+    const { card, question } = req.body;
+    const nm = zh ? card.zh : card.en;
+    prompt = zh
+      ? `你是神谕。求问者问：${question || "（心中默念的问题）"}\n抽到的牌：${nm}（${card.reversed ? "逆位" : "正位"}，${card.reversed ? card.rev : card.up}）\n\n请先给出 verdict：yes/no/maybe 三选一（JSON 格式 {"verdict":"yes","text":"..."}）。text 是 80-120 字的中文解读，直接、有力、不模棱两可，像神谕一样笃定。`
+      : `You are an oracle. Question: ${question || "(unspoken)"}\nCard drawn: ${nm} (${card.reversed ? "Reversed" : "Upright"}, ${card.reversed ? card.rev : card.up})\n\nReply in JSON: {"verdict":"yes|no|maybe","text":"..."}. Text: 80-120 words English, direct and decisive like an oracle, no hedging.`;
   } else {
     return res.status(400).json({ error: "unknown type" });
   }
@@ -50,9 +56,16 @@ export default async function handler(req, res) {
       body: JSON.stringify({ model: JJJ_MODEL, messages: [{ role: "user", content: prompt }], temperature: 0.85, max_tokens: 1400 }),
     });
     const d = await r.json();
-    const text = d.choices?.[0]?.message?.content || "";
+    let text = d.choices?.[0]?.message?.content || "";
+    let verdict = null;
+    if (type === "oracle" && text) {
+      try {
+        const j = JSON.parse(text.replace(/^```json?\n?/, "").replace(/\n?```$/, "").trim());
+        verdict = j.verdict; text = j.text || text;
+      } catch (e) { /* fall through with raw text */ }
+    }
     if (!text) return res.status(500).json({ error: "empty AI response" });
-    return res.status(200).json({ success: true, text });
+    return res.status(200).json({ success: true, text, ...(verdict ? { verdict } : {}) });
   } catch (e) {
     return res.status(500).json({ error: String(e).slice(0, 200) });
   }

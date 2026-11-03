@@ -184,6 +184,17 @@ footer .rule { width: 44px; height: 1px; background: var(--line); margin: 0 auto
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+.verdict { font-family: var(--serif); font-size: 64px; text-align: center; margin: 8px 0 4px; letter-spacing: 6px; }
+.verdict.yes { color: #7ddba3; } .verdict.no { color: #e08a8a; } .verdict.maybe { color: var(--gold); }
+.ocard { text-align: center; color: var(--faint); font-size: 14px; margin-bottom: 16px; }
+details.centry { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; background: var(--ink2); overflow: hidden; }
+details.centry summary { padding: 13px 16px; cursor: pointer; font-size: 15px; list-style: none; }
+details.centry summary::-webkit-details-marker { display: none; }
+.cnum { color: var(--gold); font-family: var(--serif); margin-right: 8px; min-width: 28px; display: inline-block; }
+.ctag { float: right; font-size: 11px; color: var(--faint); border: 1px solid var(--line); border-radius: 20px; padding: 2px 10px; }
+.cbody { padding: 0 16px 16px; font-size: 14px; color: var(--muted); line-height: 1.7; }
+.cbody p { margin: 8px 0; }
+.ckw { color: var(--gold); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -205,6 +216,8 @@ footer .rule { width: 44px; height: 1px; background: var(--line); margin: 0 auto
     <button data-tab="match"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.7-10-9.3C.4 8.6 2.3 5 5.7 5c2 0 3.4 1.1 4.3 2.4h4c.9-1.3 2.3-2.4 4.3-2.4 3.4 0 5.3 3.6 3.7 6.7C19.5 16.3 12 21 12 21z" transform="scale(.92) translate(1,1)"/></svg><span data-i="tabMatch">Match</span></button>
     <button data-tab="dream"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span data-i="tabDream">Dreams</span></button>
     <button data-tab="natal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg><span data-i="tabNatal">Birth Chart</span></button>
+    <button data-tab="oracle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 7.2H22l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3L2 9.2h7.6z"/></svg><span data-i="tabOracle">Yes/No</span></button>
+    <button data-tab="cards"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i="tabCards">Meanings</span></button>
     <button data-tab="hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span data-i="tabHist">History</span></button>
   </div>
 
@@ -226,6 +239,10 @@ footer .rule { width: 44px; height: 1px; background: var(--line); margin: 0 auto
     <div class="sec-desc" data-i="dailyHD">Tap your sign — fresh every morning.</div>
     <div class="zgrid" id="zgrid"></div>
     <div id="hout"></div>
+    <div class="sec-label" style="margin-top:28px" data-i="moonT">Moon today</div>
+    <div id="moonbox"></div>
+    <div class="sec-label" style="margin-top:28px" data-i="affT">Today's affirmation</div>
+    <div id="affbox"></div>
   </section>
 
   <section id="tab-match">
@@ -254,6 +271,22 @@ footer .rule { width: 44px; height: 1px; background: var(--line); margin: 0 auto
     <div class="qbox"><label data-i="birthPlace">Birth place (optional)</label><input id="bPlace" data-i-ph="placePh" placeholder="e.g. New York"></div>
     <button class="btn" onclick="doNatal()"><span data-i="readChart">Read My Chart</span></button>
     <div id="nout"></div>
+  </section>
+
+  <section id="tab-oracle">
+    <div class="sec-label" data-i="oracleT">Yes / No Oracle</div>
+    <div class="sec-desc" data-i="oracleD">Think of a yes-or-no question. One card, one honest answer.</div>
+    <div class="qbox"><label data-i="yourQ">Your question</label>
+      <input id="oracleQ" data-i-ph="oraclePh" placeholder="e.g. Will I get the offer?"></div>
+    <button class="btn" onclick="doOracle()"><span data-i="askOracle">Ask the Oracle</span></button>
+    <div id="oout"></div>
+  </section>
+
+  <section id="tab-cards">
+    <div class="sec-label" data-i="cardsT">Card Meanings</div>
+    <div class="sec-desc" data-i="cardsD">All 78 cards — upright & reversed.</div>
+    <div class="qbox"><input id="cardSearch" data-i-ph="searchPh" placeholder="Search cards…" oninput="renderCards()"></div>
+    <div id="cardlist"></div>
   </section>
 
   <section id="tab-hist">
@@ -290,6 +323,7 @@ en: {
   foot: 'For reflection & entertainment · Lumina Tarot 2026',
   remindT: 'Daily reminder', remindD: 'Get your daily card delivered every morning.',
   emailPh: 'you@example.com', subscribe: 'Notify Me Daily', subOk: 'Subscribed! See you daily.', subErr: 'Please enter a valid email.',
+  moonT: 'Moon today', affT: "Today's affirmation",
   matchT: 'Compatibility check', matchD: 'Two signs, one honest reading.',
   youSign: 'Your sign', theirSign: 'Their sign', checkMatch: 'Check Compatibility',
   dreamT: 'Dream interpretation', dreamD: 'Tell me what you dreamed — I\u2019ll read between the lines.',
@@ -298,6 +332,11 @@ en: {
   birthDate: 'Birth date', birthTime: 'Birth time (optional)', birthPlace: 'Birth place (optional)',
   placePh: 'e.g. New York', readChart: 'Read My Chart',
   share: 'Share as Image', saved: 'Image saved — share it anywhere.',
+  tabOracle: 'Yes/No', tabCards: 'Meanings',
+  oracleT: 'Yes / No Oracle', oracleD: 'Think of a yes-or-no question. One card, one honest answer.',
+  oraclePh: 'e.g. Will I get the offer?', askOracle: 'Ask the Oracle',
+  cardsT: 'Card Meanings', cardsD: 'All 78 cards — upright & reversed.', searchPh: 'Search cards…',
+  yesWord: 'YES', noWord: 'NO', maybeWord: 'MAYBE',
   spreadDesc: { single: 'One card — today\u2019s energy in a glance.', three: 'Past · present · future — how things unfold.', celtic: 'Ten cards, deep dive — for the big decisions.', love: 'Five cards on where your heart is heading.', career: 'Three cards on work direction.' },
   spreadName: { single: 'Daily Card', three: 'Three Cards', celtic: 'Celtic Cross', love: 'Love Spread', career: 'Career Spread' },
 },
@@ -317,6 +356,7 @@ zh: {
   foot: '供思考与娱乐 · Lumina Tarot 2026',
   remindT: '每日提醒', remindD: '每天早晨把你的每日一牌送达。',
   emailPh: 'you@example.com', subscribe: '订阅每日提醒', subOk: '已订阅！每天见。', subErr: '请输入有效邮箱。',
+  moonT: '今日月相', affT: '今日肯定语',
   matchT: '配对合盘', matchD: '两个星座，一次真诚的解读。',
   youSign: '你的星座', theirSign: '对方星座', checkMatch: '查看配对结果',
   dreamT: '解梦', dreamD: '告诉我你的梦 — 我来读懂言外之意。',
@@ -325,6 +365,11 @@ zh: {
   birthDate: '出生日期', birthTime: '出生时间（选填）', birthPlace: '出生地（选填）',
   placePh: '例如：北京', readChart: '解读我的星盘',
   share: '生成分享图', saved: '图片已保存 — 去分享吧。',
+  tabOracle: '问答', tabCards: '牌义',
+  oracleT: 'Yes / No 神谕', oracleD: '想一个是非问题，一张牌，一个诚实的答案。',
+  oraclePh: '例如：我能拿到这个 offer 吗？', askOracle: '问神谕',
+  cardsT: '牌义百科', cardsD: '78 张牌 — 正位与逆位全解。', searchPh: '搜索牌…',
+  yesWord: '是', noWord: '否', maybeWord: '未定',
   spreadDesc: { single: '一张牌 — 一眼看清今日能量。', three: '过去 · 现在 · 未来 — 看事情的脉络。', celtic: '十张牌深度解读 — 给重要抉择。', love: '五张牌看清感情走向。', career: '三张牌指引事业方向。' },
   spreadName: { single: '每日一牌', three: '三牌阵', celtic: '凯尔特十字', love: '爱情牌阵', career: '事业牌阵' },
 }};
@@ -351,6 +396,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
   document.querySelectorAll('section').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); $('tab-' + b.dataset.tab).classList.add('on');
   if (b.dataset.tab === 'hist') renderHist();
+  if (b.dataset.tab === 'cards') renderCards();
 });
 
 /* ---------- spreads ---------- */
@@ -544,6 +590,73 @@ function wrapText(x, text, cx, y, maxW, lh) {
   if (line) x.fillText(line, cx, yy);
 }
 
+/* ---------- yes/no oracle ---------- */
+async function doOracle() {
+  const q = $('oracleQ').value.trim();
+  const deck = shuffle([...FULL_DECK]);
+  const c = { ...deck[0], reversed: Math.random() < 0.35 };
+  const nm = LANG === 'zh' ? c.zh : c.en;
+  $('oout').innerHTML = `<div class="loading"><div class="orbit"></div>${t('aligning')}</div>`;
+  try {
+    const r = await fetch('/api/interpret', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'oracle', lang: LANG, question: q,
+        card: { en: c.en, zh: c.zh, reversed: c.reversed, up: c.up, rev: c.rev } }) });
+    const d = await r.json();
+    const verdict = d.verdict || 'maybe';
+    const wv = verdict === 'yes' ? t('yesWord') : verdict === 'no' ? t('noWord') : t('maybeWord');
+    const wcls = verdict === 'yes' ? 'yes' : verdict === 'no' ? 'no' : 'maybe';
+    $('oout').innerHTML = d.text ? `
+      <div class="result oracle">
+        <div class="verdict ${wcls}">${wv}</div>
+        <div class="ocard">${nm} · ${c.reversed ? t('reversed') : t('upright')}</div>
+        ${esc(d.text)}
+      </div>
+      <button class="btn ghost" onclick='shareText(${JSON.stringify(nm + ' — ' + wv)}, ${JSON.stringify(d.text)})'>${t('share')}</button>`
+      : `<div class="result">${t('silent')}</div>`;
+    if (d.text) saveHist({ kind: 'oracle', title: (q || nm) + ' → ' + wv, text: d.text, at: Date.now() });
+  } catch (e) { $('oout').innerHTML = `<div class="result">${t('connErr')}</div>`; }
+}
+
+/* ---------- card encyclopedia ---------- */
+function renderCards() {
+  const q = ($('cardSearch').value || '').toLowerCase();
+  const list = FULL_DECK.filter(c =>
+    !q || c.en.toLowerCase().includes(q) || c.zh.includes(q) ||
+    (c.suitZh && c.suitZh.includes(q)) || (c.kw || []).join(' ').toLowerCase().includes(q));
+  $('cardlist').innerHTML = list.map(c => {
+    const nm = LANG === 'zh' ? c.zh : c.en;
+    const tag = c.arcana === 'major' ? (LANG === 'zh' ? '大阿卡纳' : 'Major') : (c.suitZh + (LANG === 'zh' ? '牌组' : ''));
+    return `<details class="centry"><summary><span class="cnum">${c.arcana === 'minor' ? c.suitZh : (c.n === 0 ? '0' : c.n)}</span> ${esc(nm)} <span class="ctag">${tag}</span></summary>
+      <div class="cbody"><p><b>${t('upright')}:</b> ${esc(c.up)}</p><p><b>${t('reversed')}:</b> ${esc(c.rev)}</p>
+      ${(c.kw || []).length ? `<p class="ckw">${(c.kw || []).map(esc).join(' · ')}</p>` : ''}</div></details>`;
+  }).join('') || `<div class="result">${t('noHist')}</div>`;
+}
+
+/* ---------- moon & affirmation ---------- */
+const AFF = {
+  en: ["Trust the timing of your life.", "You are allowed to begin again.", "Softness is also strength.", "What you seek is seeking you.", "Rest is productive.", "Your intuition already knows.", "Small steps still move mountains."],
+  zh: ["相信你生命的节奏。", "你随时可以重新开始。", "温柔也是一种力量。", "你在寻找的，也在寻找你。", "休息也是一种前进。", "你的直觉早就知道答案。", "小步也终将移山。"],
+};
+const MOONS = { en: ["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"],
+  zh: ["新月","娥眉月","上弦月","盈凸月","满月","亏凸月","下弦月","残月"] };
+const MOON_ICON = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"];
+function moonPhase(d) {
+  let y = d.getFullYear(), m = d.getMonth() + 1, day = d.getDate();
+  if (m < 3) { y--; m += 12; }
+  const a = Math.floor(y / 100), b = 2 - a + Math.floor(a / 4);
+  const jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + b - 1524.5;
+  const days = jd - 2451550.1;
+  return Math.floor(((days % 29.53058867) + 29.53058867) % 29.53058867 / 29.53058867 * 8 + 0.5) % 8;
+}
+function renderMoonAff() {
+  const now = new Date(), mi = moonPhase(now);
+  $('moonbox').innerHTML = `<div class="result" style="text-align:center"><div style="font-size:52px">${MOON_ICON[mi]}</div><div style="font-size:17px;margin-top:8px">${MOONS[LANG][mi]}</div></div>`;
+  const list = AFF[LANG] || AFF.en;
+  const ai = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 864e5) % list.length;
+  $('affbox').innerHTML = `<div class="result" style="text-align:center;font-family:var(--serif);font-size:20px;font-style:italic">“${list[ai]}”</div>
+    <button class="btn ghost" onclick='shareText(${JSON.stringify(LANG === "zh" ? "今日肯定语" : "Daily Affirmation")}, ${JSON.stringify(list[ai])})'>${t('share')}</button>`;
+}
+
 /* ---------- subscribe ---------- */
 async function subscribe() {
   const em = $('remindEmail').value.trim();
@@ -560,8 +673,9 @@ async function subscribe() {
 /* ---------- init ---------- */
 setLang(LANG);
 fillSigns();
+renderMoonAff();
 const _sl = setLang;
-setLang = function (l) { _sl(l); fillSigns(); };
+setLang = function (l) { _sl(l); fillSigns(); renderMoonAff(); };
 </script>
 </body>
 </html>
