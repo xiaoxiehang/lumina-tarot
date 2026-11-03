@@ -195,6 +195,57 @@ details.centry summary::-webkit-details-marker { display: none; }
 .cbody { padding: 0 16px 16px; font-size: 14px; color: var(--muted); line-height: 1.7; }
 .cbody p { margin: 8px 0; }
 .ckw { color: var(--gold); font-size: 13px; }
+
+/* ── Tab strip: scroll inside the bar on small screens (was page-level sideways scroll) ── */
+.tabs { overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { flex: none; padding: 11px 14px; }
+.tabs button span { white-space: nowrap; }
+
+/* ── Tablet ── */
+@media (min-width: 768px) {
+  .wrap { max-width: 720px; }
+  #spreads { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+  #spreads .spread { margin-bottom: 0; }
+  .zgrid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ── Desktop: rethink for the wide canvas, not a stretched phone ── */
+@media (min-width: 1024px) {
+  .wrap { max-width: 1060px; padding: 0 40px 90px; }
+  .hero { padding: 56px 0 16px; }
+  .hero h1 { font-size: 72px; letter-spacing: 2px; }
+  .hero p { font-size: 15.5px; }
+  .tabs { overflow: visible; }
+  .tabs button { flex: 1 1 0; padding: 12px 6px; font-size: 14px; }
+
+  /* tarot: picker rail on the left, cards + reading on the right */
+  #tab-tarot.on { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 10px 36px; align-items: start; }
+  #tab-tarot.on > .sec-label, #tab-tarot.on > .sec-desc { grid-column: 1 / -1; }
+  #tab-tarot.on > #spreads, #tab-tarot.on > .qbox, #tab-tarot.on > .btn { grid-column: 1; }
+  #tab-tarot.on > #spreads { grid-template-columns: 1fr; }
+  #tab-tarot.on > .stage { grid-column: 2; grid-row: 3; }
+  #tab-tarot.on > #out { grid-column: 2; grid-row: 4; }
+
+  /* horoscope: full sign wall, calm side panels */
+  .zgrid { grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  #moonbox .result, #affbox .result { max-width: 640px; margin-left: auto; margin-right: auto; }
+
+  /* card encyclopedia: two columns of entries */
+  #cardlist { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: start; }
+  details.centry { margin-bottom: 0; }
+
+  /* forms: two / three across, comfortable measure elsewhere */
+  .form-row { display: grid; gap: 0 14px; }
+  .form-row.c2 { grid-template-columns: 1fr 1fr; }
+  .form-row.c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row .qbox { margin-top: 0; }
+  #tab-dream .qbox, #tab-oracle .qbox, #tab-hist .qbox,
+  #tab-dream > .btn, #tab-oracle > .btn, #tab-hist > .btn.ghost { max-width: 680px; }
+  #tab-stars .result, #tab-match .result, #tab-dream .result,
+  #tab-natal .result, #tab-oracle .result, #tab-hist .result { max-width: 76ch; }
+}
 </style>
 </head>
 <body>
@@ -248,8 +299,10 @@ details.centry summary::-webkit-details-marker { display: none; }
   <section id="tab-match">
     <div class="sec-label" data-i="matchT">Compatibility check</div>
     <div class="sec-desc" data-i="matchD">Two signs, one honest reading.</div>
+    <div class="form-row c2">
     <div class="qbox"><label data-i="youSign">Your sign</label><select id="signA" class="sel"></select></div>
     <div class="qbox"><label data-i="theirSign">Their sign</label><select id="signB" class="sel"></select></div>
+    </div>
     <button class="btn" onclick="doMatch()"><span data-i="checkMatch">Check Compatibility</span></button>
     <div id="mout"></div>
   </section>
@@ -266,9 +319,11 @@ details.centry summary::-webkit-details-marker { display: none; }
   <section id="tab-natal">
     <div class="sec-label" data-i="natalT">Birth chart</div>
     <div class="sec-desc" data-i="natalD">Your cosmic fingerprint — Sun, Moon & Rising.</div>
+    <div class="form-row c3">
     <div class="qbox"><label data-i="birthDate">Birth date</label><input type="date" id="bDate"></div>
     <div class="qbox"><label data-i="birthTime">Birth time (optional)</label><input type="time" id="bTime"></div>
     <div class="qbox"><label data-i="birthPlace">Birth place (optional)</label><input id="bPlace" data-i-ph="placePh" placeholder="e.g. New York"></div>
+    </div>
     <button class="btn" onclick="doNatal()"><span data-i="readChart">Read My Chart</span></button>
     <div id="nout"></div>
   </section>
